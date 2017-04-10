@@ -5,8 +5,6 @@ import (
 
 	"strconv"
 
-	"fmt"
-
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -131,27 +129,18 @@ type PassiveDto struct {
 }
 
 func (api *GoLOLAPI) StaticDataGetChampions(version int, locale string, complete bool) (list StaticChampionList) {
-	optionsString := ""
-	if (version != 0) && (locale == "") {
-		optionsString = "?version=" + strconv.Itoa(version)
+	options := map[string]string{}
+	if version != 0 {
+		options["version"] = strconv.Itoa(version)
 	}
-	if (version == 0) && (locale != "") {
-		optionsString = "?locale=" + locale
+	if locale != "" {
+		options["locale"] = locale
 	}
-	if (version != 0) && (locale != "") {
-		optionsString = "?version=" + strconv.Itoa(version) + "&locale=" + locale
+	if complete {
+		options["champData"] = "all"
 	}
-	if (version == 0) && (locale == "") && (complete) {
-		optionsString = "?champData=all"
-	}
-	fmt.Println(optionsString)
-	var response []byte
-	var e error
-	if optionsString == "" {
-		response, e = api.RequestStaticData("/lol/static-data/v3/champions", cache.NoExpiration, false)
-	} else {
-		response, e = api.RequestStaticData("/lol/static-data/v3/champions"+optionsString, cache.NoExpiration, true)
-	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/champions", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
 	}
@@ -307,32 +296,296 @@ type BasicDataDto struct {
 }
 
 func (api *GoLOLAPI) StaticDataGetItems(version int, locale string, complete bool) (list ItemListDto) {
-	optionsString := ""
-	if (version != 0) && (locale == "") {
-		optionsString = "?version=" + strconv.Itoa(version)
+	options := map[string]string{}
+	if version != 0 {
+		options["version"] = strconv.Itoa(version)
 	}
-	if (version == 0) && (locale != "") {
-		optionsString = "?locale=" + locale
+	if locale != "" {
+		options["locale"] = locale
 	}
-	if (version != 0) && (locale != "") {
-		optionsString = "?version=" + strconv.Itoa(version) + "&locale=" + locale
+	if complete {
+		options["itemListData"] = "all"
 	}
-	if (version == 0) && (locale == "") && (complete) {
-		optionsString = "?itemListData=all"
-	}
-	fmt.Println(optionsString)
-	var response []byte
-	var e error
-	if optionsString == "" {
-		response, e = api.RequestStaticData("/lol/static-data/v3/items", cache.NoExpiration, false)
-	} else {
-		response, e = api.RequestStaticData("/lol/static-data/v3/items"+optionsString, cache.NoExpiration, true)
-	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/items", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
 	}
 	list = ItemListDto{}
 	err := json.Unmarshal(response, &list)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+type LanguageStringsDto struct {
+	Data    map[string]string
+	Version string
+	Type    string
+}
+
+func (api *GoLOLAPI) StaticDataGetLanguageStrings(version string, locale string) (strings LanguageStringsDto) {
+	options := map[string]string{}
+	if version != "" {
+		options["version"] = version
+	}
+	if locale != "" {
+		options["locale"] = locale
+	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/language-strings", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
+	if e != nil {
+		panic(e)
+	}
+	strings = LanguageStringsDto{}
+	err := json.Unmarshal(response, &strings)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+func (api *GoLOLAPI) StaticDataGetLanguages() (list []string) {
+	response, e := api.RequestStaticData("/lol/static-data/v3/languages", cache.NoExpiration, false)
+	if e != nil {
+		panic(e)
+	}
+	list = []string{}
+	err := json.Unmarshal(response, &list)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+type MapDataDto struct {
+	Data    map[string]MapDetailsDto
+	Version string
+	Type    string
+}
+type MapDetailsDto struct {
+	MapName               string
+	Image                 ImageDto
+	ID                    float64 `json:"mapId"`
+	UnpurchasableItemList []float64
+}
+
+func (api *GoLOLAPI) StaticDataGetMaps(version string, locale string) (maps MapDataDto) {
+	options := map[string]string{}
+	if version != "" {
+		options["version"] = version
+	}
+	if locale != "" {
+		options["locale"] = locale
+	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/maps", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
+	if e != nil {
+		panic(e)
+	}
+	maps = MapDataDto{}
+	err := json.Unmarshal(response, &maps)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+type MasteryListDto struct {
+	Data    map[string]MasteryDto
+	Version string
+	Tree    MasteryTreeDto
+	Type    string
+}
+type MasteryTreeDto struct {
+	Resolve  []MasteryTreeListDto
+	Ferocity []MasteryTreeListDto
+	Cunning  []MasteryTreeListDto
+}
+type MasteryTreeListDto struct {
+	MasteryTreeItems []MasteryTreeItemDto
+}
+type MasteryTreeItemDto struct {
+	ID     int `json:"masteryId"`
+	Prereq string
+}
+type MasteryDto struct {
+	Prereq               string
+	MasteryTree          string
+	Name                 string
+	Ranks                int
+	Image                ImageDto
+	SanitizedDescription []string
+	ID                   int
+	Description          []string
+}
+
+func (api *GoLOLAPI) StaticDataGetMasteries(version int, locale string, complete bool) (list MasteryListDto) {
+	options := map[string]string{}
+	if version != 0 {
+		options["version"] = strconv.Itoa(version)
+	}
+	if locale != "" {
+		options["locale"] = locale
+	}
+	if complete {
+		options["masteryListData"] = "all"
+	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/items", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
+	if e != nil {
+		panic(e)
+	}
+	list = MasteryListDto{}
+	err := json.Unmarshal(response, &list)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+type RealmDto struct {
+	Lg             string
+	Dd             string
+	L              string
+	N              map[string]string
+	ProfileIconMax int
+	Store          string
+	V              string
+	Cdn            string
+	Css            string
+}
+
+func (api *GoLOLAPI) StaticDataGetRealm() (realm RealmDto) {
+	response, e := api.RequestStaticData("/lol/static-data/v3/realms", cache.NoExpiration, false)
+	if e != nil {
+		panic(e)
+	}
+	realm = RealmDto{}
+	err := json.Unmarshal(response, &realm)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+type RuneListDto struct {
+	Data    map[string]RuneDto
+	Version string
+	Type    string
+	Basic   BasicDataDto
+}
+type RuneDto struct {
+	PlainText            string
+	HideFromAll          bool
+	InStore              bool
+	Into                 []string
+	ID                   int
+	Stats                BasicDataStatsDto
+	Colloq               string
+	Maps                 map[string]bool
+	SpecialRecipe        int
+	Image                ImageDto
+	Description          string
+	Tags                 []string
+	RequiredChampion     string
+	From                 []string
+	Group                string
+	ConsumeOnFull        bool
+	Name                 string
+	Consumed             bool
+	SanitizedDescription string
+	Depth                int
+	Rune                 MetaDataDto
+	Stacks               int
+}
+
+func (api *GoLOLAPI) StaticDataGetRunes(version string, locale string, complete bool) (list RuneListDto) {
+	options := map[string]string{}
+	if version != "" {
+		options["version"] = version
+	}
+	if locale != "" {
+		options["locale"] = locale
+	}
+	if complete {
+		options["runeListData"] = "all"
+	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/runes", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
+	if e != nil {
+		panic(e)
+	}
+	list = RuneListDto{}
+	err := json.Unmarshal(response, &list)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+type SummonerSpellListDto struct {
+	Data    map[string]SummonerSpellDto
+	Version string
+	Type    string
+}
+type SummonerSpellDto struct {
+	Vars                 []SpellVarsDto
+	Image                ImageDto
+	CostBurn             string
+	Cooldown             []float64
+	EffectBurn           []string
+	ID                   int
+	CooldownBurn         string
+	Tooltip              string
+	MaxRank              int
+	RangeBurn            string
+	Description          string
+	Effect               [][]float64
+	Key                  string
+	LevelTip             LevelTipDto
+	Modes                []string
+	Ressource            string
+	Name                 string
+	CostType             string
+	SanitizedDescription string
+	SanitizedTooltip     string
+	Range                []int
+	Cost                 []int
+	SummonerLevel        int
+}
+
+func (api *GoLOLAPI) StaticDataGetSummonerSpells(version string, locale string, complete bool) (list SummonerSpellListDto) {
+	options := map[string]string{}
+	if version != "" {
+		options["version"] = version
+	}
+	if locale != "" {
+		options["locale"] = locale
+	}
+	if complete {
+		options["spellData"] = "all"
+	}
+	uri, hasParameters := getEndpointURI("/lol/static-data/v3/summoner-spells", options)
+	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
+	if e != nil {
+		panic(e)
+	}
+	list = SummonerSpellListDto{}
+	err := json.Unmarshal(response, &list)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+func (api *GoLOLAPI) StaticDataGetVersions() (versions []string) {
+	response, e := api.RequestStaticData("/lol/static-data/v3/summoner-spells", cache.NoExpiration, false)
+	if e != nil {
+		panic(e)
+	}
+	versions = []string{}
+	err := json.Unmarshal(response, &versions)
 	if err != nil {
 		panic(err)
 	}
