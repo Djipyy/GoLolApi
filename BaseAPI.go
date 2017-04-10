@@ -12,18 +12,19 @@ import (
 )
 
 //EUW Values for the EUW Region
-var EUW = Region{Name: "EUW", PlatformID: "EUW1", Host: "https://euw1.api.riotgames.com"}
+var EUW = Region{Name: "EUW", PlatformID: "EUW1", Host: "https://euw1.api.riotgames.com", DefaultLocale: "en_GB"}
 
 //Region Struct containing information about a region
 type Region struct {
-	Name       string
-	PlatformID string
-	Host       string
+	Name          string
+	PlatformID    string
+	Host          string
+	DefaultLocale string
 }
 
 //NewAPI Returns an instance of the api you can use.
 func NewAPI(region Region, APIKey string, rpers float64) (api GoLOLAPI) {
-	api = GoLOLAPI{Region: region, APIKey: APIKey, limiter: rate.NewLimiter(rate.Limit(rpers), 2), cache: cache.New(1*time.Minute, 1*time.Minute)}
+	api = GoLOLAPI{Region: region, APIKey: APIKey, limiter: rate.NewLimiter(rate.Limit(rpers), 9), cache: cache.New(1*time.Minute, 1*time.Minute)}
 	return
 }
 
@@ -80,6 +81,35 @@ func (api *GoLOLAPI) RequestEndpoint(path string, cacheDuration time.Duration) (
 	if cacheDuration != 0 {
 		api.cache.Set(path, r, cacheDuration)
 	}
+	return
+}
+func (api *GoLOLAPI) RequestStaticData(path string, cacheDuration time.Duration, withparameters bool) (r []byte, e error) {
+	cacheHit, found := api.cache.Get(path)
+	if found {
+		fmt.Println("Cache hit")
+		hit, _ := cacheHit.([]byte)
+		return hit, nil
+	}
+	var uri string
+	if withparameters {
+		uri = api.Region.Host + path + "&api_key=" + api.APIKey
+	} else {
+		uri = api.Region.Host + path + "?api_key=" + api.APIKey
+	}
+	response, e := http.Get(uri)
+	fmt.Println("get")
+	if e != nil {
+		panic(e)
+	}
+	if response.StatusCode == 429 {
+		fmt.Println("RATE LIMIT EXCEEDED 429")
+	}
+	r, e2 := ioutil.ReadAll(response.Body)
+	if e2 != nil {
+		panic(e2)
+	}
+
+	api.cache.Set(path, r, cacheDuration)
 	return
 }
 func MinifySummonerName(name string) (r string) {
