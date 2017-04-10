@@ -56,6 +56,29 @@ func (api *GoLOLAPI) RequestEndpoint_(path string) (r *http.Response, e error) {
 	api.cache.Set(path, *r, cache.DefaultExpiration)
 	return
 }
+func getEndpointURI(endpointPath string, options map[string]string) (uri string, hasParameters bool) {
+	hasParameters = false
+	if len(options) == 0 {
+		uri = endpointPath
+		return
+	}
+	if len(options) == 1 {
+		for k, v := range options {
+			uri = endpointPath + "?" + k + "=" + v
+			hasParameters = true
+			return
+		}
+	}
+	if len(options) > 1 {
+		uri = endpointPath + "?"
+		hasParameters = true
+		for k, v := range options {
+			uri = uri + "&" + k + "=" + v
+		}
+		return
+	}
+	return
+}
 func (api *GoLOLAPI) RequestEndpoint(path string, cacheDuration time.Duration) (r []byte, e error) {
 	cacheHit, found := api.cache.Get(path)
 	if found {
