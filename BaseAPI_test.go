@@ -19,6 +19,7 @@ func TestGetEndpointURI(t *testing.T) {
 	endpoint := "/lol/static-data/v3/summoner-spells"
 	expected_1 := "/lol/static-data/v3/summoner-spells?locale=fr_FR"
 	expected_2 := "/lol/static-data/v3/summoner-spells?locale=fr_FR&spellData=all"
+	expected_2_1 := "/lol/static-data/v3/summoner-spells?spellData=all&locale=fr_FR"
 	expected_3 := "/lol/static-data/v3/summoner-spells"
 	options_1 := map[string]string{"locale": "fr_FR"}
 	options_2 := map[string]string{"locale": "fr_FR", "spellData": "all"}
@@ -29,7 +30,9 @@ func TestGetEndpointURI(t *testing.T) {
 	}
 	output_2, hasParameters_2 := gololapi.GetEndpointURI(endpoint, options_2)
 	if output_2 != expected_2 || !hasParameters_2 {
-		t.Errorf("Output was incorrect, got %s, wanted %s", output_2, expected_2)
+		if output_2 != expected_2_1 {
+			t.Errorf("Output was incorrect, got %s, wanted %s", output_2, expected_2)
+		}
 	}
 	output_3, hasParameters_3 := gololapi.GetEndpointURI(endpoint, options_3)
 	if output_3 != expected_3 || hasParameters_3 {
