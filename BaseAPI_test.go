@@ -3,7 +3,7 @@ package gololapi_test
 import (
 	"testing"
 
-	gololapi "romaghi.net/golol-api"
+	gololapi "github.com/Djipyy/GoLolApi"
 )
 
 func TestMinifySummonerName(t *testing.T) {
