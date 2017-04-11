@@ -139,7 +139,7 @@ func (api *GoLOLAPI) StaticDataGetChampions(version int, locale string, complete
 	if complete {
 		options["champData"] = "all"
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/champions", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/champions", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -306,7 +306,7 @@ func (api *GoLOLAPI) StaticDataGetItems(version int, locale string, complete boo
 	if complete {
 		options["itemListData"] = "all"
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/items", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/items", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -333,7 +333,7 @@ func (api *GoLOLAPI) StaticDataGetLanguageStrings(version string, locale string)
 	if locale != "" {
 		options["locale"] = locale
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/language-strings", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/language-strings", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -379,7 +379,7 @@ func (api *GoLOLAPI) StaticDataGetMaps(version string, locale string) (maps MapD
 	if locale != "" {
 		options["locale"] = locale
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/maps", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/maps", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -432,7 +432,7 @@ func (api *GoLOLAPI) StaticDataGetMasteries(version int, locale string, complete
 	if complete {
 		options["masteryListData"] = "all"
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/items", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/items", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -512,7 +512,7 @@ func (api *GoLOLAPI) StaticDataGetRunes(version string, locale string, complete 
 	if complete {
 		options["runeListData"] = "all"
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/runes", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/runes", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -567,7 +567,7 @@ func (api *GoLOLAPI) StaticDataGetSummonerSpells(version string, locale string, 
 	if complete {
 		options["spellData"] = "all"
 	}
-	uri, hasParameters := getEndpointURI("/lol/static-data/v3/summoner-spells", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/summoner-spells", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
