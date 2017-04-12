@@ -11,15 +11,27 @@ import (
 	"golang.org/x/time/rate"
 )
 
-//EUW Values for the EUW Region
-var EUW = Region{Name: "EUW", PlatformID: "EUW1", Host: "https://euw1.api.riotgames.com", DefaultLocale: "en_GB"}
+//Defines the different regions
+var (
+	EUW  = Region{Name: "EUW", PlatformID: "EUW1", Host: "https://euw1.api.riotgames.com"}
+	BR   = Region{Name: "BR", PlatformID: "BR1", Host: "https://br1.api.riotgames.com"}
+	EUNE = Region{Name: "EUNE", PlatformID: "EUN1", Host: "https://eun1.api.riotgames.com"}
+	JP   = Region{Name: "JP", PlatformID: "JP1", Host: "https://jp1.api.riotgames.com"}
+	KR   = Region{Name: "KR", PlatformID: "KR", Host: "https://kr.api.riotgames.com"}
+	LAN  = Region{Name: "LAN", PlatformID: "LA1", Host: "https://la1.api.riotgames.com"}
+	LAS  = Region{Name: "LAS", PlatformID: "LA2", Host: "https://la2.api.riotgames.com"}
+	NA   = Region{Name: "NA", PlatformID: "NA1", Host: "https://na1.api.riotgames.com"}
+	OCE  = Region{Name: "OCE", PlatformID: "OC1", Host: "https://oc1.api.riotgames.com"}
+	TR   = Region{Name: "TR", PlatformID: "TR1", Host: "https://tr1.api.riotgames.com"}
+	RU   = Region{Name: "RU", PlatformID: "RU", Host: "https://ru.api.riotgames.com"}
+	PBE  = Region{Name: "PBE", PlatformID: "PBE1", Host: "https://pbe1.api.riotgames.com"}
+)
 
 //Region Struct containing information about a region
 type Region struct {
-	Name          string
-	PlatformID    string
-	Host          string
-	DefaultLocale string
+	Name       string
+	PlatformID string
+	Host       string
 }
 
 //NewAPI Returns an instance of the api you can use.
@@ -28,6 +40,7 @@ func NewAPI(region Region, APIKey string, rpers float64) (api GoLOLAPI) {
 	return
 }
 
+//GoLOLAPI This holds the api.It has the receiver for many of the API Endpoints.
 type GoLOLAPI struct {
 	Region  Region
 	APIKey  string
@@ -37,25 +50,6 @@ type GoLOLAPI struct {
 
 var httpClient = &http.Client{}
 
-func (api *GoLOLAPI) RequestEndpoint_(path string) (r *http.Response, e error) {
-	cacheHit, found := api.cache.Get(path)
-	if found {
-		fmt.Println("Cache hit")
-		hit, _ := cacheHit.(http.Response)
-		return &hit, nil
-	}
-	reservation := api.limiter.ReserveN(time.Now(), 1)
-	time.Sleep(reservation.Delay())
-	r, e = http.Get(api.Region.Host + path + "?api_key=" + api.APIKey)
-	if e != nil {
-		panic(e)
-	}
-	if r.StatusCode == 429 {
-		fmt.Println("RATE LIMIT EXCEEDED 429")
-	}
-	api.cache.Set(path, *r, cache.DefaultExpiration)
-	return
-}
 func GetEndpointURI(endpointPath string, options map[string]string) (uri string, hasParameters bool) {
 	hasParameters = false
 	if len(options) == 0 {
@@ -88,14 +82,12 @@ func GetEndpointURI(endpointPath string, options map[string]string) (uri string,
 func (api *GoLOLAPI) RequestEndpoint(path string, cacheDuration time.Duration) (r []byte, e error) {
 	cacheHit, found := api.cache.Get(path)
 	if found {
-		fmt.Println("Cache hit")
 		hit, _ := cacheHit.([]byte)
 		return hit, nil
 	}
 	reservation := api.limiter.ReserveN(time.Now(), 1)
 	time.Sleep(reservation.Delay())
 	response, e := http.Get(api.Region.Host + path + "?api_key=" + api.APIKey)
-	fmt.Println("get")
 	if e != nil {
 		panic(e)
 	}
