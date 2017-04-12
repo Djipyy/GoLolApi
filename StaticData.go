@@ -5,6 +5,8 @@ import (
 
 	"strconv"
 
+	"errors"
+
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -16,7 +18,7 @@ type StaticChampionList struct {
 	Format  string
 }
 type StaticChampion struct {
-	//Info      InfoDto
+	Info        InfoDto
 	EnemyTips   []string
 	Stats       StatsDto
 	Name        string
@@ -33,6 +35,12 @@ type StaticChampion struct {
 	ID          int
 	Blurb       string
 	Spells      []ChampionSpellDto
+}
+type InfoDto struct {
+	Difficulty int
+	Attack     int
+	Defense    int
+	Magic      int
 }
 type StatsDto struct {
 	Armorperlevel        float32
@@ -295,10 +303,10 @@ type BasicDataDto struct {
 	Stacks               int
 }
 
-func (api *GoLOLAPI) StaticDataGetItems(version int, locale string, complete bool) (list ItemListDto) {
+func (api *GoLOLAPI) StaticDataGetItems(version string, locale string, complete bool) (list ItemListDto) {
 	options := map[string]string{}
-	if version != 0 {
-		options["version"] = strconv.Itoa(version)
+	if version != "" {
+		options["version"] = version
 	}
 	if locale != "" {
 		options["locale"] = locale
@@ -317,6 +325,17 @@ func (api *GoLOLAPI) StaticDataGetItems(version int, locale string, complete boo
 		panic(err)
 	}
 	return
+}
+func (api *GoLOLAPI) StaticDataGetItemByID(ID int, version string, locale string, complete bool) (item ItemDto, e error) {
+	list := api.StaticDataGetItems(version, locale, complete)
+	if e != nil {
+		panic(e)
+	}
+	if res, found := list.Data[strconv.Itoa(ID)]; found {
+		return res, nil
+	}
+	e = errors.New("Item of id " + strconv.Itoa(ID) + " was not found.")
+	return item, e
 }
 
 type LanguageStringsDto struct {
@@ -421,10 +440,10 @@ type MasteryDto struct {
 	Description          []string
 }
 
-func (api *GoLOLAPI) StaticDataGetMasteries(version int, locale string, complete bool) (list MasteryListDto) {
+func (api *GoLOLAPI) StaticDataGetMasteries(version string, locale string, complete bool) (list MasteryListDto) {
 	options := map[string]string{}
-	if version != 0 {
-		options["version"] = strconv.Itoa(version)
+	if version != "" {
+		options["version"] = version
 	}
 	if locale != "" {
 		options["locale"] = locale
@@ -432,7 +451,7 @@ func (api *GoLOLAPI) StaticDataGetMasteries(version int, locale string, complete
 	if complete {
 		options["masteryListData"] = "all"
 	}
-	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/items", options)
+	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/masteries", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
 	if e != nil {
 		panic(e)
@@ -443,6 +462,17 @@ func (api *GoLOLAPI) StaticDataGetMasteries(version int, locale string, complete
 		panic(err)
 	}
 	return
+}
+func (api *GoLOLAPI) StaticDataGetMasteryByID(ID int, version string, locale string, complete bool) (result MasteryDto, e error) {
+	list := api.StaticDataGetMasteries(version, locale, complete)
+	if e != nil {
+		panic(e)
+	}
+	if res, found := list.Data[strconv.Itoa(ID)]; found {
+		return res, nil
+	}
+	e = errors.New("Mastery of id " + strconv.Itoa(ID) + " was not found.")
+	return result, e
 }
 
 type RealmDto struct {
@@ -576,6 +606,23 @@ func (api *GoLOLAPI) StaticDataGetSummonerSpells(version string, locale string, 
 	err := json.Unmarshal(response, &list)
 	if err != nil {
 		panic(err)
+	}
+	return
+}
+func (api *GoLOLAPI) StaticDataGetSummonerSpellByID(ID int, version string, locale string, complete bool) (result SummonerSpellDto, e error) {
+	list := api.StaticDataGetSummonerSpells(version, locale, complete)
+	if e != nil {
+		panic(e)
+	}
+	found := false
+	for _, spell := range list.Data {
+		if spell.ID == ID {
+			found = true
+			result = spell
+		}
+	}
+	if !found {
+		e = errors.New("Summoner spell of id " + strconv.Itoa(ID) + " was not found.")
 	}
 	return
 }
