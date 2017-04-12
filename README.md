@@ -1,4 +1,4 @@
-# GoLolApi
+# GoLolApi [![Build Status](https://travis-ci.org/Djipyy/GoLolApi.svg?branch=master)](https://travis-ci.org/Djipyy/GoLolApi)
 
 A wrapper around the League Of Legends API written in Go.
 
