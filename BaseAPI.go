@@ -104,6 +104,37 @@ func (api *GoLOLAPI) RequestEndpoint(path string, cacheDuration time.Duration) (
 	}
 	return
 }
+func (api *GoLOLAPI) RequestLegacyEndpoint(path string, cacheDuration time.Duration, withparameters bool) (r []byte, e error) {
+	cacheHit, found := api.cache.Get(path)
+	if found {
+		hit, _ := cacheHit.([]byte)
+		return hit, nil
+	}
+	reservation := api.limiter.ReserveN(time.Now(), 1)
+	time.Sleep(reservation.Delay())
+	var uri string
+	if withparameters {
+		uri = "https://" + api.Region.Name + ".api.riotgames.com" + path + "&api_key=" + api.APIKey
+	} else {
+		uri = "https://" + api.Region.Name + ".api.riotgames.com" + path + "?api_key=" + api.APIKey
+	}
+	response, e := http.Get(uri)
+	if e != nil {
+		panic(e)
+	}
+	if response.StatusCode == 429 {
+		fmt.Println("RATE LIMIT EXCEEDED 429")
+	}
+	r, e2 := ioutil.ReadAll(response.Body)
+	if e2 != nil {
+		panic(e2)
+	}
+
+	if cacheDuration != 0 {
+		api.cache.Set(path, r, cacheDuration)
+	}
+	return
+}
 func (api *GoLOLAPI) RequestStaticData(path string, cacheDuration time.Duration, withparameters bool) (r []byte, e error) {
 	cacheHit, found := api.cache.Get(path)
 	if found {
