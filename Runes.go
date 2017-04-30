@@ -34,7 +34,7 @@ type RuneSlot struct {
 
 //GetRunePages Makes a request to the Runes-V3 endpoint and returns a RunePages struct
 func (s *Summoner) GetRunePages() (pages RunePages) {
-	response, e := s.API.RequestEndpoint("/lol/platform/v3/runes/by-summoner/"+strconv.Itoa(s.ID), time.Hour)
+	response, e := s.API.RequestEndpoint("/lol/platform/v3/runes/by-summoner/"+strconv.FormatFloat(s.ID, 'f', -1, 64), time.Hour)
 	if e != nil {
 		panic(e)
 	}

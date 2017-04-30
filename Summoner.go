@@ -8,12 +8,12 @@ import (
 
 //Summoner Contains a SummonerDto Object
 type Summoner struct {
-	Name          string `json:"name"`
-	ID            int    `json:"id"`
-	AccountID     int    `json:"accountId"`
-	Summonerlevel int    `json:"summonerLevel"`
-	ProfileIconID int    `json:"profileIconId"`
-	RevisionDate  int    `json:"revisionDate"`
+	Name          string  `json:"name"`
+	ID            float64 `json:"id"`
+	AccountID     float64 `json:"accountId"`
+	Summonerlevel int     `json:"summonerLevel"`
+	ProfileIconID int     `json:"profileIconId"`
+	RevisionDate  int     `json:"revisionDate"`
 	Region        *Region
 	API           *GoLOLAPI
 }

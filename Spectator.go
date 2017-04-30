@@ -57,7 +57,7 @@ type CurrentGameParticipant struct {
 }
 
 func (s *Summoner) GetCurrentGame() (game CurrentGameInfo, e error) {
-	response, e := s.API.RequestEndpoint("/lol/spectator/v3/active-games/by-summoner/"+strconv.Itoa(s.ID), 0)
+	response, e := s.API.RequestEndpoint("/lol/spectator/v3/active-games/by-summoner/"+strconv.FormatFloat(s.ID, 'f', -1, 64), 0)
 	if e != nil {
 		panic(e)
 	}

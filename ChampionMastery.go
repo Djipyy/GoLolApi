@@ -21,7 +21,7 @@ type ChampionMastery struct {
 }
 
 func (s *Summoner) GetChampionMasteries() (masteries []ChampionMastery) {
-	response, e := s.API.RequestEndpoint("/lol/champion-mastery/v3/champion-masteries/by-summoner/"+strconv.Itoa(s.ID), time.Hour)
+	response, e := s.API.RequestEndpoint("/lol/champion-mastery/v3/champion-masteries/by-summoner/"+strconv.FormatFloat(s.ID, 'f', -1, 64), time.Hour)
 	if e != nil {
 		panic(e)
 	}
@@ -34,7 +34,7 @@ func (s *Summoner) GetChampionMasteries() (masteries []ChampionMastery) {
 	return
 }
 func (s *Summoner) GetMasteryOfChampion(championID int) (mastery ChampionMastery) {
-	response, e := s.API.RequestEndpoint("/lol/champion-mastery/v3/champion-masteries/by-summoner/"+strconv.Itoa(s.ID)+"/by-champion/"+strconv.Itoa(championID), time.Hour)
+	response, e := s.API.RequestEndpoint("/lol/champion-mastery/v3/champion-masteries/by-summoner/"+strconv.FormatFloat(s.ID, 'f', -1, 64)+"/by-champion/"+strconv.Itoa(championID), time.Hour)
 	if e != nil {
 		panic(e)
 	}
@@ -47,7 +47,7 @@ func (s *Summoner) GetMasteryOfChampion(championID int) (mastery ChampionMastery
 	return
 }
 func (s *Summoner) GetTotalChampionMastery() (score int) {
-	response, e := s.API.RequestEndpoint("/lol/champion-mastery/v3/scores/by-summoner/"+strconv.Itoa(s.ID), time.Hour)
+	response, e := s.API.RequestEndpoint("/lol/champion-mastery/v3/scores/by-summoner/"+strconv.FormatFloat(s.ID, 'f', -1, 64), time.Hour)
 	if e != nil {
 		panic(e)
 	}

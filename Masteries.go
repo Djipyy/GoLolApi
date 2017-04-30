@@ -28,7 +28,7 @@ type MasteryPage struct {
 
 //GetMasteryPages Makes a request to the Masteries-V3 endpoint and returns a MasteryPages struct
 func (s *Summoner) GetMasteryPages() (pages MasteryPages) {
-	response, e := s.API.RequestEndpoint("/lol/platform/v3/masteries/by-summoner/"+strconv.Itoa(s.ID), time.Hour)
+	response, e := s.API.RequestEndpoint("/lol/platform/v3/masteries/by-summoner/"+strconv.FormatFloat(s.ID, 'f', -1, 64), time.Hour)
 	if e != nil {
 		panic(e)
 	}
