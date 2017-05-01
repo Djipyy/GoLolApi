@@ -6,12 +6,15 @@ import (
 	"time"
 )
 
+//MatchList This object contains a list of matches.
 type MatchList struct {
 	Matches    []MatchReference
 	TotalGames int
 	StartIndex int
 	EndIndex   int
 }
+
+//MatchReference This object contains a reference to a match.
 type MatchReference struct {
 	Lane       string
 	ID         float64 `json:"gameId"`
@@ -22,6 +25,8 @@ type MatchReference struct {
 	Role       string
 	Timestamp  float64
 }
+
+//MatchData This object contains the data of a match.
 type MatchData struct {
 	SeasonID              int
 	QueueID               int
@@ -37,10 +42,14 @@ type MatchData struct {
 	GameDuration          float64
 	GameCreation          float64
 }
+
+//ParticipantIdentity This object contains the identity of a participant. Only works in ranked matches.
 type ParticipantIdentity struct {
 	Player Player
 	ID     int `json:"participantId"`
 }
+
+//Player This object contains player information.
 type Player struct {
 	CurrentPlatformID string
 	SummonerName      string
@@ -51,6 +60,8 @@ type Player struct {
 	SummonerID        float64
 	AccountID         float64
 }
+
+//TeamStats This object contains statistics of a match.
 type TeamStats struct {
 	FirstDragon          bool
 	FirstInhibitor       bool
@@ -69,10 +80,14 @@ type TeamStats struct {
 	Win                  string
 	DragonKills          int
 }
+
+//TeamBans This object contains the bans of a team.
 type TeamBans struct {
 	PickTurn   int
 	ChampionID int
 }
+
+//Participant This object contains participant data.
 type Participant struct {
 	Stats                     ParticipantStats
 	ParticipantID             int
@@ -85,6 +100,8 @@ type Participant struct {
 	Spell1ID                  int
 	ChampionID                int
 }
+
+//ParticipantStats This object contains the statistics of a Participant.
 type ParticipantStats struct {
 	PhysicalDamageDealt             float64
 	NeutralMinionsKilledTeamJungle  int
@@ -161,6 +178,8 @@ type ParticipantStats struct {
 	Item0                           int
 	PhysicalDamageTaken             float64
 }
+
+//ParticipantTimeline This object contains the timeline of a Participant.
 type ParticipantTimeline struct {
 	Lane                        string
 	ParticipantID               int
@@ -173,15 +192,21 @@ type ParticipantTimeline struct {
 	DamageTakenDiffPerMinDeltas map[string]float64
 	DamageTakenPerMinDeltas     map[string]float64
 }
+
+//MatchTimeline This object contains the timeline of a match.
 type MatchTimeline struct {
 	Frames        []MatchFrame
 	FrameInterval float64
 }
+
+//MatchFrame This object contains a frame of a timeline.
 type MatchFrame struct {
 	Timestamp float64
 	Frames    map[int]MatchParticipantFrame `json:"participantFrames"`
 	Events    []MatchEvent
 }
+
+//MatchParticipantFrame This object contains a participant data in a MatchFrame.
 type MatchParticipantFrame struct {
 	TotalGold           int
 	TeamScore           int
@@ -194,9 +219,13 @@ type MatchParticipantFrame struct {
 	Xp                  int
 	JungleMinionsKilled int
 }
+
+//MatchPosition This object contains the coordinates of a participant.
 type MatchPosition struct {
 	X, Y int
 }
+
+//MatchEvent This object contains event data.
 type MatchEvent struct {
 	Timestamp float64
 	Type      string

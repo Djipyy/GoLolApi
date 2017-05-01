@@ -10,6 +10,8 @@ import (
 	cache "github.com/patrickmn/go-cache"
 )
 
+var all = "all"
+
 //StaticChampionList This object contains champion list data.
 type StaticChampionList struct {
 	Data    map[string]StaticChampion
@@ -169,7 +171,7 @@ func (api *GoLOLAPI) StaticDataGetChampions(version int, locale string, complete
 		options["locale"] = locale
 	}
 	if complete {
-		options["champData"] = "all"
+		options["champData"] = all
 	}
 	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/champions", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
@@ -352,7 +354,7 @@ func (api *GoLOLAPI) StaticDataGetItems(version string, locale string, complete 
 		options["locale"] = locale
 	}
 	if complete {
-		options["itemListData"] = "all"
+		options["itemListData"] = all
 	}
 	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/items", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
@@ -508,7 +510,7 @@ func (api *GoLOLAPI) StaticDataGetMasteries(version string, locale string, compl
 		options["locale"] = locale
 	}
 	if complete {
-		options["masteryListData"] = "all"
+		options["masteryListData"] = all
 	}
 	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/masteries", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
@@ -607,7 +609,7 @@ func (api *GoLOLAPI) StaticDataGetRunes(version string, locale string, complete 
 		options["locale"] = locale
 	}
 	if complete {
-		options["runeListData"] = "all"
+		options["runeListData"] = all
 	}
 	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/runes", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
@@ -679,7 +681,7 @@ func (api *GoLOLAPI) StaticDataGetSummonerSpells(version string, locale string, 
 		options["locale"] = locale
 	}
 	if complete {
-		options["spellData"] = "all"
+		options["spellData"] = all
 	}
 	uri, hasParameters := GetEndpointURI("/lol/static-data/v3/summoner-spells", options)
 	response, e := api.RequestStaticData(uri, cache.NoExpiration, hasParameters)
