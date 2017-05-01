@@ -50,6 +50,7 @@ type GoLOLAPI struct {
 
 var httpClient = &http.Client{}
 
+//GetEndpointURI Returns a URI with the options added to the original endpoint.
 func GetEndpointURI(endpointPath string, options map[string]string) (uri string, hasParameters bool) {
 	hasParameters = false
 	if len(options) == 0 {
@@ -79,6 +80,8 @@ func GetEndpointURI(endpointPath string, options map[string]string) (uri string,
 	}
 	return
 }
+
+//RequestEndpoint Query and endpoint, put it in the cache and return the answer.
 func (api *GoLOLAPI) RequestEndpoint(path string, cacheDuration time.Duration) (r []byte, e error) {
 	cacheHit, found := api.cache.Get(path)
 	if found {
@@ -104,6 +107,8 @@ func (api *GoLOLAPI) RequestEndpoint(path string, cacheDuration time.Duration) (
 	}
 	return
 }
+
+//RequestLegacyEndpoint Query and endpoint, put it in the cache and return the answer. Works with legacy endpoints (not v3).
 func (api *GoLOLAPI) RequestLegacyEndpoint(path string, cacheDuration time.Duration, withparameters bool) (r []byte, e error) {
 	cacheHit, found := api.cache.Get(path)
 	if found {
@@ -135,6 +140,8 @@ func (api *GoLOLAPI) RequestLegacyEndpoint(path string, cacheDuration time.Durat
 	}
 	return
 }
+
+//RequestStaticData Query and endpoint, put it in the cache and return the answer. Works with the Static Data and doesn't trigger the rate limit.
 func (api *GoLOLAPI) RequestStaticData(path string, cacheDuration time.Duration, withparameters bool) (r []byte, e error) {
 	cacheHit, found := api.cache.Get(path)
 	if found {
@@ -164,6 +171,8 @@ func (api *GoLOLAPI) RequestStaticData(path string, cacheDuration time.Duration,
 	api.cache.Set(path, r, cacheDuration)
 	return
 }
+
+//MinifySummonerName Returns a string without spaces and in lower characters.
 func MinifySummonerName(name string) (r string) {
 	r = strings.Replace(name, " ", "", -1)
 	r = strings.ToLower(r)

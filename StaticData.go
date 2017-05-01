@@ -10,6 +10,7 @@ import (
 	cache "github.com/patrickmn/go-cache"
 )
 
+//StaticChampionList This object contains champion list data.
 type StaticChampionList struct {
 	Data    map[string]StaticChampion
 	Keys    map[string]string
@@ -17,6 +18,8 @@ type StaticChampionList struct {
 	Type    string
 	Format  string
 }
+
+//StaticChampion This object contains champion data.
 type StaticChampion struct {
 	Info        InfoDto
 	EnemyTips   []string
@@ -36,12 +39,16 @@ type StaticChampion struct {
 	Blurb       string
 	Spells      []ChampionSpellDto
 }
+
+//InfoDto This object contains champion information.
 type InfoDto struct {
 	Difficulty int
 	Attack     int
 	Defense    int
 	Magic      int
 }
+
+//StatsDto This object contains champion stats data.
 type StatsDto struct {
 	Armorperlevel        float32
 	Hpperlevel           float32
@@ -64,17 +71,23 @@ type StatsDto struct {
 	Hpregen              float32
 	Critperlevel         float32
 }
+
+//ImageDto This object contains image data.
 type ImageDto struct {
 	Full       string
 	Group      string
 	Sprite     string
 	H, W, Y, X int
 }
+
+//SkinDto This object contains champion skin data.
 type SkinDto struct {
 	Num  int
 	Name string
 	ID   int
 }
+
+//ChampionSpellDto This object contains champion spell data.
 type ChampionSpellDto struct {
 	CooldownBurn         string
 	Ressource            string
@@ -98,11 +111,14 @@ type ChampionSpellDto struct {
 	AltImages            []ImageDto
 	Name                 string
 }
+
+//LevelTipDto This object contains champion level tip data.
 type LevelTipDto struct {
 	Effect []string
 	Label  []string
 }
 
+//SpellVarsDto This object contains spell vars data.
 type SpellVarsDto struct {
 	RanksWith string
 	Dyn       string
@@ -111,6 +127,7 @@ type SpellVarsDto struct {
 	Key       string
 }
 
+//RecommendedDto This object contains champion recommended data.
 type RecommendedDto struct {
 	Map      string
 	Champion string
@@ -120,15 +137,21 @@ type RecommendedDto struct {
 	Type     string
 	blocks   []BlockDto
 }
+
+//BlockDto This object contains champion recommended block data.
 type BlockDto struct {
 	Items   []BlockItemDto
 	RecMath bool
 	Type    string
 }
+
+//BlockItemDto This object contains champion recommended block item data.
 type BlockItemDto struct {
 	Count int
 	ID    int
 }
+
+//PassiveDto This object contains champion passive data.
 type PassiveDto struct {
 	Image                ImageDto
 	Description          string
@@ -136,6 +159,7 @@ type PassiveDto struct {
 	Name                 string
 }
 
+//StaticDataGetChampions Retrieves champion list.
 func (api *GoLOLAPI) StaticDataGetChampions(version int, locale string, complete bool) (list StaticChampionList) {
 	options := map[string]string{}
 	if version != 0 {
@@ -160,6 +184,7 @@ func (api *GoLOLAPI) StaticDataGetChampions(version int, locale string, complete
 	return
 }
 
+//ItemListDto This object contains item list data.
 type ItemListDto struct {
 	Data    map[string]ItemDto
 	Tree    []ItemTreeDto
@@ -168,6 +193,8 @@ type ItemListDto struct {
 	Basic   BasicDataDto
 	Type    string
 }
+
+//ItemDto This object contains item tree data.
 type ItemDto struct {
 	Gold                 GoldDto
 	PlainText            string
@@ -191,12 +218,16 @@ type ItemDto struct {
 	Rune                 MetaDataDto
 	Stacks               int
 }
+
+//GoldDto This object contains item gold data.
 type GoldDto struct {
 	Sell        int
 	Total       int
 	Base        int
 	Purchasable bool
 }
+
+//BasicDataStatsDto This object contains basic data stats.
 type BasicDataStatsDto struct {
 	RPercentMagicPenetrationModPerLevel float64
 	RFlatEnergyModPerLevel              float64
@@ -264,19 +295,27 @@ type BasicDataStatsDto struct {
 	FlatCritChanceMod                   float64
 	FlatArmorMod                        float64
 }
+
+//MetaDataDto This object contains meta data.
 type MetaDataDto struct {
 	Tier   string
 	Type   string
 	IsRune bool
 }
+
+//ItemTreeDto This object contains item tree data.
 type ItemTreeDto struct {
 	Header string
 	Tags   []string
 }
+
+//GroupDto This object contains item group data.
 type GroupDto struct {
 	MaxGroupOwnable string
 	Key             string
 }
+
+//BasicDataDto This object contains basic data.
 type BasicDataDto struct {
 	Gold                 GoldDto
 	PlainText            string
@@ -303,6 +342,7 @@ type BasicDataDto struct {
 	Stacks               int
 }
 
+//StaticDataGetItems Retrieves item list.
 func (api *GoLOLAPI) StaticDataGetItems(version string, locale string, complete bool) (list ItemListDto) {
 	options := map[string]string{}
 	if version != "" {
@@ -326,6 +366,8 @@ func (api *GoLOLAPI) StaticDataGetItems(version string, locale string, complete 
 	}
 	return
 }
+
+//StaticDataGetItemByID Retrieves item by ID.
 func (api *GoLOLAPI) StaticDataGetItemByID(ID int, version string, locale string, complete bool) (item ItemDto, e error) {
 	list := api.StaticDataGetItems(version, locale, complete)
 	if e != nil {
@@ -338,12 +380,14 @@ func (api *GoLOLAPI) StaticDataGetItemByID(ID int, version string, locale string
 	return item, e
 }
 
+//LanguageStringsDto This object contains language strings data.
 type LanguageStringsDto struct {
 	Data    map[string]string
 	Version string
 	Type    string
 }
 
+//StaticDataGetLanguageStrings Retrieve language strings data.
 func (api *GoLOLAPI) StaticDataGetLanguageStrings(version string, locale string) (strings LanguageStringsDto) {
 	options := map[string]string{}
 	if version != "" {
@@ -365,6 +409,7 @@ func (api *GoLOLAPI) StaticDataGetLanguageStrings(version string, locale string)
 	return
 }
 
+//StaticDataGetLanguages Retrieve supported languages data.
 func (api *GoLOLAPI) StaticDataGetLanguages() (list []string) {
 	response, e := api.RequestStaticData("/lol/static-data/v3/languages", cache.NoExpiration, false)
 	if e != nil {
@@ -378,11 +423,14 @@ func (api *GoLOLAPI) StaticDataGetLanguages() (list []string) {
 	return
 }
 
+//MapDataDto This object contains map data.
 type MapDataDto struct {
 	Data    map[string]MapDetailsDto
 	Version string
 	Type    string
 }
+
+//MapDetailsDto  This object contains map details data.
 type MapDetailsDto struct {
 	MapName               string
 	Image                 ImageDto
@@ -390,6 +438,7 @@ type MapDetailsDto struct {
 	UnpurchasableItemList []float64
 }
 
+//StaticDataGetMaps Retrieve map data.
 func (api *GoLOLAPI) StaticDataGetMaps(version string, locale string) (maps MapDataDto) {
 	options := map[string]string{}
 	if version != "" {
@@ -411,24 +460,33 @@ func (api *GoLOLAPI) StaticDataGetMaps(version string, locale string) (maps MapD
 	return
 }
 
+//MasteryListDto This object contains mastery list data.
 type MasteryListDto struct {
 	Data    map[string]MasteryDto
 	Version string
 	Tree    MasteryTreeDto
 	Type    string
 }
+
+//MasteryTreeDto This object contains mastery tree data.
 type MasteryTreeDto struct {
 	Resolve  []MasteryTreeListDto
 	Ferocity []MasteryTreeListDto
 	Cunning  []MasteryTreeListDto
 }
+
+//MasteryTreeListDto This object contains mastery tree list data.
 type MasteryTreeListDto struct {
 	MasteryTreeItems []MasteryTreeItemDto
 }
+
+//MasteryTreeItemDto This object contains mastery tree item data.
 type MasteryTreeItemDto struct {
 	ID     int `json:"masteryId"`
 	Prereq string
 }
+
+//MasteryDto This object contains mastery data.
 type MasteryDto struct {
 	Prereq               string
 	MasteryTree          string
@@ -440,6 +498,7 @@ type MasteryDto struct {
 	Description          []string
 }
 
+//StaticDataGetMasteries Retrieves mastery list.
 func (api *GoLOLAPI) StaticDataGetMasteries(version string, locale string, complete bool) (list MasteryListDto) {
 	options := map[string]string{}
 	if version != "" {
@@ -463,6 +522,8 @@ func (api *GoLOLAPI) StaticDataGetMasteries(version string, locale string, compl
 	}
 	return
 }
+
+//StaticDataGetMasteryByID Retrieves mastery item by ID.
 func (api *GoLOLAPI) StaticDataGetMasteryByID(ID int, version string, locale string, complete bool) (result MasteryDto, e error) {
 	list := api.StaticDataGetMasteries(version, locale, complete)
 	if e != nil {
@@ -475,6 +536,7 @@ func (api *GoLOLAPI) StaticDataGetMasteryByID(ID int, version string, locale str
 	return result, e
 }
 
+//RealmDto This object contains realm data.
 type RealmDto struct {
 	Lg             string
 	Dd             string
@@ -484,9 +546,10 @@ type RealmDto struct {
 	Store          string
 	V              string
 	Cdn            string
-	Css            string
+	CSS            string
 }
 
+//StaticDataGetRealm Retrieve realm data.
 func (api *GoLOLAPI) StaticDataGetRealm() (realm RealmDto) {
 	response, e := api.RequestStaticData("/lol/static-data/v3/realms", cache.NoExpiration, false)
 	if e != nil {
@@ -500,12 +563,15 @@ func (api *GoLOLAPI) StaticDataGetRealm() (realm RealmDto) {
 	return
 }
 
+//RuneListDto This object contains rune list data.
 type RuneListDto struct {
 	Data    map[string]RuneDto
 	Version string
 	Type    string
 	Basic   BasicDataDto
 }
+
+//RuneDto This object contains rune data.
 type RuneDto struct {
 	PlainText            string
 	HideFromAll          bool
@@ -531,6 +597,7 @@ type RuneDto struct {
 	Stacks               int
 }
 
+//StaticDataGetRunes Retrieves rune list.
 func (api *GoLOLAPI) StaticDataGetRunes(version string, locale string, complete bool) (list RuneListDto) {
 	options := map[string]string{}
 	if version != "" {
@@ -555,11 +622,27 @@ func (api *GoLOLAPI) StaticDataGetRunes(version string, locale string, complete 
 	return
 }
 
+//StaticDataGetRuneByID Retrieves rune by ID.
+func (api *GoLOLAPI) StaticDataGetRuneByID(ID int, version string, locale string, complete bool) (result RuneDto, e error) {
+	list := api.StaticDataGetRunes(version, locale, complete)
+	if e != nil {
+		panic(e)
+	}
+	if res, found := list.Data[strconv.Itoa(ID)]; found {
+		return res, nil
+	}
+	e = errors.New("Rune of id " + strconv.Itoa(ID) + " was not found.")
+	return result, e
+}
+
+//SummonerSpellListDto This object contains summoner spell list data.
 type SummonerSpellListDto struct {
 	Data    map[string]SummonerSpellDto
 	Version string
 	Type    string
 }
+
+//SummonerSpellDto This object contains summoner spell data.
 type SummonerSpellDto struct {
 	Vars                 []SpellVarsDto
 	Image                ImageDto
@@ -586,6 +669,7 @@ type SummonerSpellDto struct {
 	SummonerLevel        int
 }
 
+//StaticDataGetSummonerSpells Retrieves summoner spell list.
 func (api *GoLOLAPI) StaticDataGetSummonerSpells(version string, locale string, complete bool) (list SummonerSpellListDto) {
 	options := map[string]string{}
 	if version != "" {
@@ -609,6 +693,8 @@ func (api *GoLOLAPI) StaticDataGetSummonerSpells(version string, locale string, 
 	}
 	return
 }
+
+//StaticDataGetSummonerSpellByID Retrieves summoner spell by ID.
 func (api *GoLOLAPI) StaticDataGetSummonerSpellByID(ID int, version string, locale string, complete bool) (result SummonerSpellDto, e error) {
 	list := api.StaticDataGetSummonerSpells(version, locale, complete)
 	if e != nil {
@@ -626,6 +712,8 @@ func (api *GoLOLAPI) StaticDataGetSummonerSpellByID(ID int, version string, loca
 	}
 	return
 }
+
+//StaticDataGetVersions Retrieve version data.
 func (api *GoLOLAPI) StaticDataGetVersions() (versions []string) {
 	response, e := api.RequestStaticData("/lol/static-data/v3/summoner-spells", cache.NoExpiration, false)
 	if e != nil {

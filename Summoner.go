@@ -29,6 +29,8 @@ func createSummonerFromResponse(response []byte, api *GoLOLAPI) (s Summoner) {
 	return
 
 }
+
+//GetSummonerByName Get a summoner by summoner name.
 func (api *GoLOLAPI) GetSummonerByName(name string) (s Summoner) {
 	result, e := api.RequestEndpoint("/lol/summoner/v3/summoners/by-name/"+name, time.Hour)
 	if e != nil {
@@ -37,6 +39,8 @@ func (api *GoLOLAPI) GetSummonerByName(name string) (s Summoner) {
 	s = createSummonerFromResponse(result, api)
 	return
 }
+
+//GetSummonerByID Get a summoner by summoner ID.
 func (api *GoLOLAPI) GetSummonerByID(ID int) (s Summoner) {
 	IDString := strconv.Itoa(ID)
 	result, e := api.RequestEndpoint("/lol/summoner/v3/summoners/"+IDString, time.Hour)
@@ -46,6 +50,8 @@ func (api *GoLOLAPI) GetSummonerByID(ID int) (s Summoner) {
 	s = createSummonerFromResponse(result, api)
 	return
 }
+
+//GetSummonerByAccountID Get a summoner by account ID.
 func (api *GoLOLAPI) GetSummonerByAccountID(ID int) (s Summoner) {
 	IDString := strconv.Itoa(ID)
 	result, e := api.RequestEndpoint("/lol/summoner/v3/summoners/by-account/"+IDString, time.Hour)
